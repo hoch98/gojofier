@@ -47,31 +47,30 @@ def output(path):
 
       noseHeight = topNose[1]-nose[1]
       angle = math.atan((midEye[1]-nose[1])/(midEye[0]-nose[0]))
-      print(angle)
       realNose = (int(nose[0]-noseHeight*math.cos(angle)), int(nose[1]-noseHeight*math.sin(angle)))
 
       cv2.circle(roi_color, realNose, 10, (0, 0, 255), -1)
 
       dist = int(math.dist(realNose, midEye)*2)
 
-      # blindfold = cv2.resize(blindfold, (w, dist), interpolation = cv2.INTER_LINEAR)
+      blindfold = cv2.resize(blindfold, (w, dist), interpolation = cv2.INTER_LINEAR)
       
-      # x_offset = x
-      # y_offset = midEye[1]-int(dist/2)+y
+      x_offset = x
+      y_offset = midEye[1]-int(dist/2)+y-13
 
-      # blindfold = ndimage.rotate(blindfold, angle*180/math.pi)
+      blindfold = ndimage.rotate(blindfold, -((angle*180/math.pi)+90))
 
-      # y1, y2 = y_offset, y_offset + blindfold.shape[0]
-      # x1, x2 = x_offset, x_offset + blindfold.shape[1]
+      y1, y2 = y_offset, y_offset + blindfold.shape[0]
+      x1, x2 = x_offset, x_offset + blindfold.shape[1]
 
-      # alpha_s = blindfold[:, :, 3] / 255.0
-      # alpha_l = 1.0 - alpha_s
+      alpha_s = blindfold[:, :, 3] / 255.0
+      alpha_l = 1.0 - alpha_s
 
-      # for c in range(0, 3):
-      #    img[y1:y2, x1:x2, c] = (alpha_s * blindfold[:, :, c] +
-      #                               alpha_l * img[y1:y2, x1:x2, c])
+      for c in range(0, 3):
+         img[y1:y2, x1:x2, c] = (alpha_s * blindfold[:, :, c] +
+                                    alpha_l * img[y1:y2, x1:x2, c])
       
 
    cv2.imwrite("output-"+path.split(".")[0]+".png", img)
 
-output("test-subject3.png")
+output("test-subject2.jpg")
